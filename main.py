@@ -4,17 +4,19 @@ import pandas as pd
 import model as m
 
 from data_helper import dataSplit
+from sklearn.model_selection import train_test_split
 
 def model1():
     data = pd.read_csv("datasets\course_engagement\online_course_engagement_data.csv")
     X = data[["TimeSpentOnCourse", "NumberOfVideosWatched", "NumberOfQuizzesTaken", "CompletionRate", "QuizScores"]].iloc[0].to_numpy()
     y = data[["CourseCompletion"]].iloc[0].to_numpy()
 
-    rows = 6000
+    rows = 600
     predictor = data[["TimeSpentOnCourse", "NumberOfVideosWatched", "NumberOfQuizzesTaken", "CompletionRate", "QuizScores"]].iloc[0:rows]
     effector =  data[["CourseCompletion"]].iloc[0:rows]
 
     training_predictor, training_effector, testing_predictor, testing_effector = dataSplit(predictor, effector, 0.6, 0.8)
+    # training_predictor, training_effector, testing_predictor, testing_effector = train_test_split(predictor, effector, train_size=0.8)
 
     model = m.Model(len(X),len(y), activationFunc= m.activation.Sigmoid(), lossFunc= m.loss.BinaryCrossEntropy(), optimizer=m.opt.RMSProp(0.1), metrics=m.metrics.Accuracy(), normalize_weights=True)
     model.addHiddenLayer(2)
