@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 
 import model as m
+from layer import Dense
 
 from data_helper import dataSplit
 from sklearn.model_selection import train_test_split
@@ -16,22 +17,33 @@ def model1():
     effector =  data[["CourseCompletion"]].iloc[0:rows]
 
     training_predictor, training_effector, testing_predictor, testing_effector = dataSplit(predictor, effector, 0.6, 0.8)
-    # training_predictor, training_effector, testing_predictor, testing_effector = train_test_split(predictor, effector, train_size=0.8)
+    # training_predictor, training_effector, testing_predictor, testing_effector = train_test_split(predictor, effector, train_size=0.6)
+    # print(training_effector.shape)
+    
+    model = m.Sequential(
+        Dense(len(X)), Dense(len(y)),
+        input_size=5,
+        output_size=len(y),
+        activationFunc= m.activation.Sigmoid(),
+        lossFunc= m.loss.BinaryCrossEntropy(),
+        optimizer=m.opt.RMSProp(0.1),
+        metrics=m.metrics.Accuracy(),
+        normalize_weights=True
+    )
 
-    model = m.Model(len(X),len(y), activationFunc= m.activation.Sigmoid(), lossFunc= m.loss.BinaryCrossEntropy(), optimizer=m.opt.RMSProp(0.1), metrics=m.metrics.Accuracy(), normalize_weights=True)
-    model.addHiddenLayer(2)
-    model.addHiddenLayer(2)
+    model.compile()
 
     # outputLayer = model.getLayerByIndex(1)
     # outputLayer.resetConnections(outputLayer.connections, m.activation.Sigmoid())
 
-    old = model.getParams()
-    model.test(testing_predictor, testing_effector)
-    model.train(training_predictor, training_effector, testing_predictor, testing_effector, batch_size=1000, epochs=10)
-    new = model.getParams()
+    # old = model.getParams()
+    # model.test(testing_predictor, testing_effector)
+    # model.train(training_predictor, training_effector, testing_predictor, testing_effector, batch_size=1000, epochs=10)
+    # new = model.getParams()
 
-    # y_pred = model.predict(X)
-    model.test(testing_predictor, testing_effector)
+    y_pred = model.predict(X)
+    print(y_pred)
+    # model.test(testing_predictor, testing_effector)
     # model.getParamDifference(new, old)
 
 # model 2

@@ -4,10 +4,14 @@ import random
 
 import activation
 
-class Neuron():
-    def __init__(self, numConnections, activationFunc = None):
+class Node():
+    pass
+
+class Neuron(Node):
+    def __init__(self, numConnections = None, activationFunc = None):
         # self.weights = self.createRandoms( -1,1,numConnections)
-        self.weights = self.initializeWeights(numConnections)
+        if numConnections:
+            self.weights = self.initializeWeights(numConnections)
         self.numConnections = numConnections
         # self.bias = random.uniform(-1,1)
         self.bias = 0
@@ -20,14 +24,27 @@ class Neuron():
         else:
             self.activationFunction = activation.Relu()
     
+    def reset(self, numConnections, activationFunc):
+        if numConnections:
+            self.weights = self.initializeWeights(numConnections)
+        self.numConnections = numConnections
+        self.bias = 0
+
+        self.input = None
+        self.activation = 0
+
+        if (activationFunc != None):
+            self.activationFunction = activationFunc
+        else:
+            self.activationFunction = activation.Relu()
+
     def initializeWeights(self, n):
         weights = self.createRandoms(-1,1,n)
         return weights * np.sqrt(1/ n)
     
     def createRandoms(self, min, max, quantity):
-        # randoms = []
         randoms = np.array([])
-        for i in range(quantity):
+        for _ in range(quantity):
             randoms = np.append(randoms, random.uniform(min,max))
         return randoms
 
@@ -55,8 +72,7 @@ class Neuron():
             return False
         for i in range(len(self.weights)):
             result = result and (self.weights[i] == other.weights[i])
-        result = result and (self.bias == other.bias)
-        result = result and (self.activationFunction == other.activationFunction)
+        result = result and (self.bias == other.bias) and (self.activationFunction == other.activationFunction)
         return result
     
     def __str__(self):

@@ -1,43 +1,48 @@
 import numpy as np
-import neuron as n
+import node as n
 
 '''
 the layer contains neurons. each neuron has an array/vector of weights associated with its output, another array/ vector of biases and an activation function
 the length of these vectors should be equal to the size of the next layer
 '''
 class Layer():
+    pass
+    def evaluate():
+        pass
+    def reset():
+        pass
+
+class Dense():
     # the direction of connections is backward 
-    def __init__(self, size, connections, activationFunc = None):
+    def __init__(self, size, connections = None, activationFunc = None):
         self.neurons = []
         self.connections = connections
-        for i in range(size):
-            # generate 'size' many neurons with random weights and biases that output to 'connections' many inputs in the preceding layer 
-            self.neurons.append(n.Neuron(connections, activationFunc))
-
-    def getSize(self):
-        return len(self.neurons)
+        self.size = size
+        if connections:
+            for i in range(size):
+                # generate 'size' many neurons with random weights and biases that output to 'connections' many inputs in the preceding layer 
+                self.neurons.append(n.Neuron(connections, activationFunc))
     
-    def resetConnections(self, connections, activationFunc):
+    def reset(self, connections, activationFunc = None):
+        self.neurons = []
         self.connections = connections
-            
-        for i in range(len(self.neurons)):
-            if (activationFunc != None):
-                self.neurons[i] = n.Neuron(connections, activationFunc)
-            else:
-                self.neurons[i] = n.Neuron(connections, "relu")
+        if connections:
+            for i in range(self.size):
+                # generate 'size' many neurons with random weights and biases that output to 'connections' many inputs in the preceding layer 
+                self.neurons.append(n.Neuron(connections, activationFunc))
 
     def evaluate(self, input: np.array):
         assert(input.shape[0] == self.connections)
-        output = np.zeros(len(self.neurons))
-        for i in range(len(self.neurons)):
+        output = np.zeros(self.size)
+        for i in range(self.size):
             output[i] = self.neurons[i].evaluate(input)
         return output
     
     def equals(self, other):
         result = True
-        if (len(self.neurons) != len(other.neurons)):
+        if (self.size != len(other.neurons)):
             return False
-        for i in range(len(self.neurons)):
+        for i in range(self.size):
             result = result and (self.neurons[i].equals(other.neurons[i]))
         result = result and (self.connections == other.connections)
         return result
