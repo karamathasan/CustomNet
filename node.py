@@ -3,18 +3,15 @@ import numpy as np
 import random
 
 import activation
+from trainable import Weight, Bias
 
 class Node():
     pass
 
 class Neuron(Node):
     def __init__(self, numConnections = None, activationFunc = None):
-        # self.weights = self.createRandoms( -1,1,numConnections)
-        if numConnections:
-            self.weights = self.initializeWeights(numConnections)
-        self.numConnections = numConnections
-        # self.bias = random.uniform(-1,1)
-        self.bias = 0
+        self.weights = Weight(numConnections)
+        self.bias = Bias()
 
         self.input = None
         self.activation = 0
@@ -25,10 +22,8 @@ class Neuron(Node):
             self.activationFunction = activation.Relu()
     
     def reset(self, numConnections, activationFunc):
-        if numConnections:
-            self.weights = self.initializeWeights(numConnections)
-        self.numConnections = numConnections
-        self.bias = 0
+        self.weights.reset(numConnections)
+        self.bias.reset()
 
         self.input = None
         self.activation = 0
@@ -38,18 +33,9 @@ class Neuron(Node):
         else:
             self.activationFunction = activation.Relu()
 
-    def initializeWeights(self, n):
-        weights = self.createRandoms(-1,1,n)
-        return weights * np.sqrt(1/ n)
-    
-    def createRandoms(self, min, max, quantity):
-        randoms = np.array([])
-        for _ in range(quantity):
-            randoms = np.append(randoms, random.uniform(min,max))
-        return randoms
+    def evaluate(self, input: np.ndarray):
+        assert (input.shape == self.weights.shape())
 
-    def evaluate(self, input: np.array):
-        assert(input.shape == self.weights.shape)
         self.input = input
         weightedSum = (self.weights.dot(input)) + self.bias
 

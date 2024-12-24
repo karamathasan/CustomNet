@@ -7,11 +7,13 @@ import loss
 import activation
 import optimizer as opt 
 
-import layer 
+from layer import TrainableLayer, Layer
 from data_helper import shuffle
 from backprop_helper import backpropagate
 
 class Model():
+    def __init__(self):
+        self.layers: list[Layer]
     pass
     def compile():
         pass
@@ -36,7 +38,7 @@ class Sequential():
         normalize_weights: allow the normalization of weights through the use of turning each weight into a multiplication of a vector and a scalar. False by default
     '''
     def __init__(
-            self, *layers: layer.Layer, input_size: int, output_size: int,  activationFunc = activation.Relu(), 
+            self, *layers: Layer, input_size: int, output_size: int,  activationFunc = activation.Relu(), 
             lossFunc = loss.SquaredError(), optimizer = opt.SGD(0.001), 
             gradient_clipping_magnitude = None, normalize_weights = False, metrics = metrics.SquaredError()
         ):
